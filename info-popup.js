@@ -18,11 +18,27 @@ template.innerHTML = `
   .backdrop.open { opacity: 1; }
   .panel {
     position: relative; background: #FFFFFF; color: #0A0A0A;
-    width: 100%; max-width: 420px; border: 1px solid #E7E7E7;
-    border-radius: 12px; padding: 24px; text-align: center;
+    width: 100%; max-width: 460px; border: 1px solid #E7E7E7;
+    border-radius: 12px; padding: 24px;
+    display: flex; align-items: stretch;
     transform: translateY(8px); transition: transform .18s ease;
     outline: none;
   }
+  .chain {
+    flex: 0 0 92px; border-right: 1px solid #E7E7E7;
+    margin-right: 16px; padding-right: 12px;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .chain-item { display: flex; align-items: center; gap: 8px; position: relative; padding: 6px 0; }
+  .chain-item:not(:last-child)::before {
+    content: ''; position: absolute; left: 3px; top: 50%; bottom: -50%;
+    width: 1px; background: #E7E7E7;
+  }
+  .chain-item .dot { width: 7px; height: 7px; border-radius: 50%; background: #C9D2DC; flex: 0 0 auto; position: relative; z-index: 1; }
+  .chain-item.current .dot { background: var(--info-popup-accent); box-shadow: 0 0 0 1px rgba(0,0,0,0.08); }
+  .chain-item .chain-label { font-size: 12px; color: #6B7280; line-height: 1.25; }
+  .chain-item.current .chain-label { color: #0A0A0A; font-weight: 600; }
+  .main { flex: 1; min-width: 0; text-align: center; }
   .backdrop.open .panel { transform: translateY(0); }
   .close {
     position: absolute; top: 12px; right: 12px; width: 32px; height: 32px;
@@ -35,11 +51,12 @@ template.innerHTML = `
     width: 96px; height: 96px; border-radius: 50%; object-fit: cover;
     display: block; margin: 0 auto 12px; border: 3px solid var(--info-popup-accent);
   }
-  .name { font-family: "Space Grotesk", sans-serif; font-size: 24px; font-weight: 600; margin: 0 0 16px; }
-  .fields { text-align: left; margin: 0 0 16px; border-top: 1px solid #E7E7E7; }
-  .field { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid #E7E7E7; }
-  .field dt { color: #6B7280; font-size: 13px; flex: 0 0 auto; }
-  .field dd { margin: 0; font-size: 14px; text-align: right; }
+  .name { font-family: "Space Grotesk", sans-serif; font-size: 18px; font-weight: 600; margin: 0 0 16px; }
+  .fields { margin: 0 0 16px; }
+  .field { display: flex; align-items: center; justify-content: center; padding: 4px 0; }
+  .field dt { color: #6B7280; font-size: 13px; }
+  .field dd { margin: 0; font-size: 14px; display: flex; align-items: center; }
+  .field dd::before { content: '|'; color: #E7E7E7; margin: 0 12px; }
   .profile { text-align: left; font-size: 14px; line-height: 1.6; margin: 0 0 16px; white-space: pre-wrap; }
   .id { position: absolute; right: 12px; bottom: 10px; font-family: "IBM Plex Mono", monospace; font-size: 12px; color: #9CA3AF; }
   @media (max-width: 639px) { .panel { max-width: none; border-radius: 0; } }
@@ -48,11 +65,14 @@ template.innerHTML = `
 <div class="backdrop" hidden>
   <div class="panel" role="dialog" aria-modal="true" aria-labelledby="info-popup-name" tabindex="-1">
     <button class="close" type="button" aria-label="关闭">×</button>
-    <img class="photo" alt="" />
-    <h2 class="name" id="info-popup-name"></h2>
-    <dl class="fields"></dl>
-    <p class="profile"></p>
-    <span class="id"></span>
+    <div class="chain" aria-label="从属链"></div>
+    <div class="main">
+      <img class="photo" alt="" />
+      <h2 class="name" id="info-popup-name"></h2>
+      <dl class="fields"></dl>
+      <p class="profile"></p>
+      <span class="id"></span>
+    </div>
   </div>
 </div>
 `;
@@ -71,6 +91,7 @@ export class InfoPopup extends HTMLElement {
     this._close = this.shadowRoot.querySelector('.close');
     this._photo = this.shadowRoot.querySelector('.photo');
     this._name = this.shadowRoot.querySelector('.name');
+    this._chain = this.shadowRoot.querySelector('.chain');
     this._fields = this.shadowRoot.querySelector('.fields');
     this._profile = this.shadowRoot.querySelector('.profile');
     this._id = this.shadowRoot.querySelector('.id');
@@ -140,6 +161,20 @@ export class InfoPopup extends HTMLElement {
   }
 
   _render(data) {
+    const chain = [...(Array.isArray(data.reportsTo) ? data.reportsTo : []), data.name].filter(Boolean);
+    this._chain.innerHTML = '';
+    chain.forEach((label, i) => {
+      const item = document.createElement('div');
+      item.className = 'chain-item' + (i === chain.length - 1 ? ' current' : '');
+      const dot = document.createElement('span');
+      dot.className = 'dot';
+      const nameEl = document.createElement('span');
+      nameEl.className = 'chain-label';
+      nameEl.textContent = label;
+      item.append(dot, nameEl);
+      this._chain.append(item);
+    });
+
     this._name.textContent = data.name ?? '';
     this._photo.src = data.pic ?? '';
     this._photo.alt = data.name ?? '';
