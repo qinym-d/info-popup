@@ -1,3 +1,4 @@
+// ⚠️ 仅供单元测试；与 info-popup.js 内联的 normalizeInfo 保持一致。
 function normalizeInfo(info) {
   if (!Array.isArray(info)) return [];
   return info

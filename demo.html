@@ -34,9 +34,6 @@
 </header>
 
 <div class="grid" id="grid"></div>
-<info-popup id="popup" accent="#E8F0FE"></info-popup>
-
-<script src="fields.js"></script>
 <script src="info-popup.js"></script>
 <script>
 
@@ -90,7 +87,6 @@
       profile: '负责 API 与数据服务，关注稳定性与可观测性。' },
   ];
 
-  const popup = document.getElementById('popup');
   const grid = document.getElementById('grid');
 
   for (const m of members) {
@@ -112,7 +108,7 @@
     role.textContent = m.dept;
 
     btn.append(img, name, role);
-    btn.addEventListener('click', () => popup.show(m));
+    btn.addEventListener('click', () => infoPopup.show(m));
     grid.append(btn);
   }
 </script>

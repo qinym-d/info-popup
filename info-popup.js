@@ -1,3 +1,25 @@
+// ⚠️ 与 fields.js 中的 normalizeInfo 保持一致（fields.js 仅供单元测试使用）。
+function normalizeInfo(info) {
+  if (!Array.isArray(info)) return [];
+  return info
+    .map((item) => {
+      if (!item || typeof item !== 'object') return null;
+      const type = typeof item.type === 'string' ? item.type.trim() : '';
+      let value = '';
+      if (Array.isArray(item.value)) {
+        value = item.value
+          .map((v) => (typeof v === 'string' ? v.trim() : ''))
+          .filter((v) => v.length > 0)
+          .join(' / ');
+      } else if (typeof item.value === 'string') {
+        value = item.value.trim();
+      }
+      if (type.length === 0 || value.length === 0) return null;
+      return { type, value };
+    })
+    .filter(Boolean);
+}
+
 const DEFAULT_ACCENT = '#E8F0FE';
 
 const template = document.createElement('template');
@@ -174,8 +196,13 @@ class InfoPopup extends HTMLElement {
     });
 
     this._name.textContent = data.name ?? '';
-    this._photo.src = data.pic ?? '';
-    this._photo.alt = data.name ?? '';
+    if (data.pic) {
+      this._photo.hidden = false;
+      this._photo.src = data.pic;
+      this._photo.alt = data.name ?? '';
+    } else {
+      this._photo.hidden = true;
+    }
 
     this._fields.innerHTML = '';
     for (const { type, value } of normalizeInfo(data.info)) {
@@ -195,3 +222,63 @@ class InfoPopup extends HTMLElement {
 }
 
 customElements.define('info-popup', InfoPopup);
+
+// ===== 便捷调用层 =====
+
+function getOrCreatePopup() {
+  let el = document.querySelector('info-popup');
+  if (!el) {
+    el = document.createElement('info-popup');
+    (document.body || document.documentElement).appendChild(el);
+  }
+  return el;
+}
+
+const infoPopup = {
+  show(data, options) {
+    return getOrCreatePopup().show(data, options);
+  },
+  hide() {
+    return getOrCreatePopup().hide();
+  },
+};
+
+function dataFromTrigger(trigger) {
+  try {
+    return JSON.parse(trigger.getAttribute('data-info-popup'));
+  } catch (err) {
+    console.error('info-popup: data-info-popup 不是合法 JSON', trigger, err);
+    return null;
+  }
+}
+
+// 声明式触发：任意元素加 data-info-popup='{JSON}'，点击即弹（事件委托，动态元素也生效）。
+document.addEventListener('click', (e) => {
+  const t = e.target;
+  const trigger = t && t.closest ? t.closest('[data-info-popup]') : null;
+  if (!trigger) return;
+  const data = dataFromTrigger(trigger);
+  if (data) {
+    const accent = trigger.getAttribute('data-info-popup-accent');
+    infoPopup.show(data, accent ? { accent } : {});
+  }
+});
+
+// 键盘：非原生交互元素按 Enter/Space 也可触发。
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  const el = e.target;
+  if (!el || !el.hasAttribute || !el.hasAttribute('data-info-popup')) return;
+  if (el.tagName === 'BUTTON' || el.tagName === 'A') return;
+  const data = dataFromTrigger(el);
+  if (data) {
+    e.preventDefault();
+    const accent = el.getAttribute('data-info-popup-accent');
+    infoPopup.show(data, accent ? { accent } : {});
+  }
+});
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.infoPopup = infoPopup;
+  globalThis.InfoPopup = InfoPopup;
+}
