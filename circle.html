@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>三个圆形对象</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #f0f2f5;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+
+    /* 横向排列的容器 */
+    .circle-row {
+      display: flex;
+      gap: 40px;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    /* 圆形的基础样式 */
+    .circle {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    /* 悬停时轻微放大 */
+    .circle:hover {
+      transform: translateY(-6px) scale(1.06);
+      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.22);
+    }
+
+    /* 键盘焦点时的高亮 */
+    .circle:focus-visible {
+      outline: 3px solid #e8f0fe;
+      outline-offset: 4px;
+    }
+
+    /* 三个独立的圆形，各自配色 */
+    .circle-1 {
+      background: linear-gradient(135deg, #ff6b6b, #ee2b47);
+    }
+
+    .circle-2 {
+      background: linear-gradient(135deg, #4facfe, #0066ff);
+    }
+
+    .circle-3 {
+      background: linear-gradient(135deg, #43e97b, #22a45d);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="circle-row">
+    <div class="circle circle-1" data-idx="0" tabindex="0" role="button" aria-label="打开红色圆形信息">1</div>
+    <div class="circle circle-2" data-idx="1" tabindex="0" role="button" aria-label="打开蓝色圆形信息">2</div>
+    <div class="circle circle-3" data-idx="2" tabindex="0" role="button" aria-label="打开绿色圆形信息">3</div>
+  </div>
+
+  <info-popup id="popup" accent="#E8F0FE"></info-popup>
+
+  <script src="fields.js"></script>
+  <script src="info-popup.js"></script>
+  <script>
+    const popup = document.getElementById('popup');
+
+    // 用与圆形同色的圆形 SVG 作为弹窗里的「证件照」
+    function circlePic(color, label) {
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><circle cx="60" cy="60" r="60" fill="${color}"/><text x="60" y="72" font-size="40" text-anchor="middle" fill="#fff" font-family="sans-serif">${label}</text></svg>`;
+      return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+    }
+
+    const data = [
+      {
+        name: '红色圆形', pic: circlePic('#ee2b47', '1'), reportsTo: [],
+        info: [
+          { type: '编号', value: '1' },
+          { type: '颜色', value: '红色' },
+          { type: '尺寸', value: '140 × 140' },
+        ],
+        profile: '第一个圆形对象，红橙渐变。',
+      },
+      {
+        name: '蓝色圆形', pic: circlePic('#0066ff', '2'), reportsTo: [],
+        info: [
+          { type: '编号', value: '2' },
+          { type: '颜色', value: '蓝色' },
+          { type: '尺寸', value: '140 × 140' },
+        ],
+        profile: '第二个圆形对象，蓝色渐变。',
+      },
+      {
+        name: '绿色圆形', pic: circlePic('#22a45d', '3'), reportsTo: [],
+        info: [
+          { type: '编号', value: '3' },
+          { type: '颜色', value: '绿色' },
+          { type: '尺寸', value: '140 × 140' },
+        ],
+        profile: '第三个圆形对象，绿色渐变。',
+      },
+    ];
+
+    document.querySelectorAll('.circle').forEach((el) => {
+      const idx = Number(el.dataset.idx);
+      const open = () => popup.show(data[idx]);
+      el.addEventListener('click', open);
+      el.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          open();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
