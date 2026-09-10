@@ -1,4 +1,4 @@
-import { buildFieldList } from './fields.js';
+import { normalizeInfo } from './fields.js';
 
 const DEFAULT_ACCENT = '#E8F0FE';
 
@@ -52,11 +52,11 @@ template.innerHTML = `
     display: block; margin: 0 auto 12px; border: 3px solid var(--info-popup-accent);
   }
   .name { font-family: "Space Grotesk", sans-serif; font-size: 18px; font-weight: 600; margin: 0 0 16px; }
-  .fields { margin: 0 0 16px; }
-  .field { display: flex; align-items: center; justify-content: center; padding: 4px 0; }
-  .field dt { color: #6B7280; font-size: 13px; }
+  .fields { display: inline-block; margin: 0 0 16px; }
+  .field { display: flex; align-items: center; padding: 4px 0; }
+  .field dt { color: #6B7280; font-size: 13px; width: 76px; text-align: right; flex: 0 0 76px; }
   .field dd { margin: 0; font-size: 14px; display: flex; align-items: center; }
-  .field dd::before { content: '|'; color: #E7E7E7; margin: 0 12px; }
+  .field dd::before { content: '|'; color: #E7E7E7; margin: 0 14px; }
   .profile { text-align: left; font-size: 14px; line-height: 1.6; margin: 0 0 16px; white-space: pre-wrap; }
   .id { position: absolute; right: 12px; bottom: 10px; font-family: "IBM Plex Mono", monospace; font-size: 12px; color: #9CA3AF; }
   @media (max-width: 639px) { .panel { max-width: none; border-radius: 0; } }
@@ -180,13 +180,13 @@ export class InfoPopup extends HTMLElement {
     this._photo.alt = data.name ?? '';
 
     this._fields.innerHTML = '';
-    for (const { label, values } of buildFieldList(data)) {
+    for (const { type, value } of normalizeInfo(data.info)) {
       const row = document.createElement('div');
       row.className = 'field';
       const dt = document.createElement('dt');
-      dt.textContent = label;
+      dt.textContent = type;
       const dd = document.createElement('dd');
-      dd.textContent = values.join(' / ');
+      dd.textContent = value;
       row.append(dt, dd);
       this._fields.append(row);
     }

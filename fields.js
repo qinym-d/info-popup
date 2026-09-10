@@ -1,45 +1,20 @@
-export function normalizeLocation(location) {
-  if (Array.isArray(location)) {
-    return location
-      .map((v) => (typeof v === 'string' ? v.trim() : ''))
-      .filter((v) => v.length > 0);
-  }
-  if (typeof location === 'string' && location.trim().length > 0) {
-    return [location.trim()];
-  }
-  return [];
-}
-
-export function resolveLabel(data, field, defaultLabel) {
-  const custom = data?.[`${field}_txt`];
-  return typeof custom === 'string' && custom.trim().length > 0
-    ? custom.trim()
-    : defaultLabel;
-}
-
-function single(value) {
-  return typeof value === 'string' && value.trim().length > 0
-    ? [value.trim()]
-    : [];
-}
-
-export function buildFieldList(data) {
-  const list = [];
-
-  const locations = normalizeLocation(data?.location);
-  if (locations.length > 0) {
-    list.push({ label: resolveLabel(data, 'location', '地点'), values: locations });
-  }
-
-  const role = single(data?.role);
-  if (role.length > 0) {
-    list.push({ label: resolveLabel(data, 'role', '职位'), values: role });
-  }
-
-  const since = single(data?.since);
-  if (since.length > 0) {
-    list.push({ label: resolveLabel(data, 'since', '时间'), values: since });
-  }
-
-  return list;
+export function normalizeInfo(info) {
+  if (!Array.isArray(info)) return [];
+  return info
+    .map((item) => {
+      if (!item || typeof item !== 'object') return null;
+      const type = typeof item.type === 'string' ? item.type.trim() : '';
+      let value = '';
+      if (Array.isArray(item.value)) {
+        value = item.value
+          .map((v) => (typeof v === 'string' ? v.trim() : ''))
+          .filter((v) => v.length > 0)
+          .join(' / ');
+      } else if (typeof item.value === 'string') {
+        value = item.value.trim();
+      }
+      if (type.length === 0 || value.length === 0) return null;
+      return { type, value };
+    })
+    .filter(Boolean);
 }

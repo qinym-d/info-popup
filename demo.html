@@ -42,23 +42,50 @@
   const pic = 'pic/potato.jpeg';
 
   const members = [
-    { name: '研发中心', type: 'dept', pic, role: '部门', dept: '总部',
-      reportsTo: [], location: '北京 · 上海', location_txt: '办公地点', since: '2018-01',
+    { name: '研发中心', type: 'dept', pic, dept: '总部',
+      reportsTo: [],
+      info: [
+        { type: '办公地点', value: '北京 · 上海' },
+        { type: '成立时间', value: '2018-01' },
+      ],
       profile: '负责公司核心产品的研发与交付。' },
-    { name: '前端组', type: 'dept', pic, role: '团队', dept: '研发中心',
-      reportsTo: ['研发中心'], location: '北京', location_txt: '办公地点', since: '2019-06',
+    { name: '前端组', type: 'dept', pic, dept: '研发中心',
+      reportsTo: ['研发中心'],
+      info: [
+        { type: '办公地点', value: '北京' },
+        { type: '成立时间', value: '2019-06' },
+      ],
       profile: '负责 Web 与移动端的界面研发。' },
-    { name: '后端组', type: 'dept', pic, role: '团队', dept: '研发中心',
-      reportsTo: ['研发中心'], location: '北京', location_txt: '办公地点', since: '2019-06',
+    { name: '后端组', type: 'dept', pic, dept: '研发中心',
+      reportsTo: ['研发中心'],
+      info: [
+        { type: '办公地点', value: '北京' },
+        { type: '成立时间', value: '2019-06' },
+      ],
       profile: '负责服务端与数据平台。' },
-    { name: '李然', type: 'person', pic, role: '前端工程师', dept: '前端组', id: 'ENG-014',
-      reportsTo: ['研发中心', '前端组'], location: ['北京', '远程'], location_txt: '办公地点', since: '2021-03',
+    { name: '李然', type: 'person', pic, dept: '前端组', id: 'ENG-014',
+      reportsTo: ['研发中心', '前端组'],
+      info: [
+        { type: '职位', value: '前端工程师' },
+        { type: '办公地点', value: ['北京', '远程'] },
+        { type: '入职时间', value: '2021-03' },
+      ],
       profile: '负责组件库与前端工程化，关注可访问性与性能。' },
-    { name: '王璐', type: 'person', pic, role: 'UI 设计师', dept: '前端组', id: 'DSN-007',
-      reportsTo: ['研发中心', '前端组'], location: '上海', location_txt: '办公地点', since: '2020-09',
+    { name: '王璐', type: 'person', pic, dept: '前端组', id: 'DSN-007',
+      reportsTo: ['研发中心', '前端组'],
+      info: [
+        { type: '职位', value: 'UI 设计师' },
+        { type: '办公地点', value: '上海' },
+        { type: '入职时间', value: '2020-09' },
+      ],
       profile: '负责产品界面与设计系统，注重简洁与一致性。' },
-    { name: '张昊', type: 'person', pic, role: '后端工程师', dept: '后端组', id: 'ENG-021',
-      reportsTo: ['研发中心', '后端组'], location: '北京', location_txt: '办公地点', since: '2022-01',
+    { name: '张昊', type: 'person', pic, dept: '后端组', id: 'ENG-021',
+      reportsTo: ['研发中心', '后端组'],
+      info: [
+        { type: '职位', value: '后端工程师' },
+        { type: '办公地点', value: '北京' },
+        { type: '入职时间', value: '2022-01' },
+      ],
       profile: '负责 API 与数据服务，关注稳定性与可观测性。' },
   ];
 
@@ -81,7 +108,7 @@
 
     const role = document.createElement('span');
     role.className = 'prole';
-    role.textContent = m.role;
+    role.textContent = m.dept;
 
     btn.append(img, name, role);
     btn.addEventListener('click', () => popup.show(m));
