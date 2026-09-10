@@ -54,8 +54,8 @@ template.innerHTML = `
   .name { font-family: "Space Grotesk", sans-serif; font-size: 18px; font-weight: 600; margin: 0 0 16px; }
   .fields { display: inline-block; margin: 0 0 16px; }
   .field { display: flex; align-items: center; padding: 4px 0; }
-  .field dt { color: #6B7280; font-size: 13px; width: 76px; text-align: right; flex: 0 0 76px; }
-  .field dd { margin: 0; font-size: 14px; display: flex; align-items: center; }
+  .field dt { color: #9CA3AF; font-size: 12px; width: 76px; text-align: right; flex: 0 0 76px; }
+  .field dd { margin: 0; font-size: 12px; display: flex; align-items: center; color: #B0B6BF; }
   .field dd::before { content: '|'; color: #E7E7E7; margin: 0 14px; }
   .profile { text-align: left; font-size: 14px; line-height: 1.6; margin: 0 0 16px; white-space: pre-wrap; }
   .id { position: absolute; right: 12px; bottom: 10px; font-family: "IBM Plex Mono", monospace; font-size: 12px; color: #9CA3AF; }
