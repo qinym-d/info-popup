@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>info-popup 演示 2：图片对象</title>
+<style>
+  :root { --accent: #E8F0FE; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Inter, -apple-system, "Segoe UI", sans-serif; background: #FFFFFF; color: #0A0A0A; }
+  header { padding: 40px 24px 0; text-align: center; }
+  header h1 { font-family: "Space Grotesk", sans-serif; font-size: 28px; margin: 0 0 8px; }
+  header p { color: #6B7280; margin: 0 0 24px; }
+  .grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px; max-width: 720px; margin: 0 auto; padding: 0 24px 64px;
+  }
+  .obj {
+    padding: 0; border: 1px solid #E7E7E7; border-radius: 10px;
+    overflow: hidden; cursor: pointer; background: #FFFFFF; display: block;
+  }
+  .obj img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; display: block; transition: transform .18s ease; }
+  .obj:hover img, .obj:focus-visible img { transform: scale(1.04); }
+  .obj:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>图片对象</h1>
+  <p>点击任意图片查看信息（背景模糊）</p>
+</header>
+
+<div class="grid" id="grid"></div>
+<info-popup id="popup" accent="#E8F0FE"></info-popup>
+
+<script src="fields.js"></script>
+<script src="info-popup.js"></script>
+<script>
+  function placeholder(name, bg) {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><rect width="200" height="200" fill="${bg}"/><text x="100" y="110" font-size="44" text-anchor="middle" fill="#0A0A0A" font-family="sans-serif">${name}</text></svg>`;
+    return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+  }
+
+  const objects = [
+    { name: '土豆', pic: 'pic/potato.jpeg',
+      reportsTo: [],
+      info: [
+        { type: '类别', value: '食材' },
+        { type: '产地', value: '甘肃' },
+        { type: '季节', value: '秋冬' },
+      ],
+      profile: '根茎类蔬菜，可炒、炖、烤，是常见的主食替代。' },
+    { name: '番茄', pic: placeholder('番茄', '#FFE4E1'),
+      reportsTo: [],
+      info: [
+        { type: '类别', value: '蔬菜' },
+        { type: '产地', value: '山东' },
+        { type: '季节', value: '夏' },
+      ],
+      profile: '多汁的浆果，可生食或入菜，富含番茄红素。' },
+    { name: '黄瓜', pic: placeholder('黄瓜', '#E6F7E6'),
+      reportsTo: [],
+      info: [
+        { type: '类别', value: '蔬菜' },
+        { type: '产地', value: '河北' },
+        { type: '季节', value: '春夏' },
+      ],
+      profile: '清脆爽口的瓜类，常凉拌或生吃。' },
+    { name: '胡萝卜', pic: placeholder('胡萝卜', '#FFF0E0'),
+      reportsTo: [],
+      info: [
+        { type: '类别', value: '根菜' },
+        { type: '产地', value: '陕西' },
+        { type: '季节', value: '秋冬' },
+      ],
+      profile: '富含胡萝卜素的根茎类蔬菜，常与肉类同炖。' },
+  ];
+
+  const popup = document.getElementById('popup');
+  const grid = document.getElementById('grid');
+
+  for (const o of objects) {
+    const btn = document.createElement('button');
+    btn.className = 'obj';
+    btn.type = 'button';
+
+    const img = document.createElement('img');
+    img.src = o.pic;
+    img.alt = o.name;
+
+    btn.append(img);
+    btn.addEventListener('click', () => popup.show(o));
+    grid.append(btn);
+  }
+</script>
+</body>
+</html>
