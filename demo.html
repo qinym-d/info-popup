@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>info-popup 演示：团队成员</title>
+<style>
+  :root { --accent: #E8F0FE; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Inter, -apple-system, "Segoe UI", sans-serif; background: #FFFFFF; color: #0A0A0A; }
+  header { padding: 40px 24px 0; text-align: center; }
+  header h1 { font-family: "Space Grotesk", sans-serif; font-size: 28px; margin: 0 0 8px; }
+  header p { color: #6B7280; margin: 0 0 24px; }
+  .tree { display: flex; justify-content: center; padding: 0 24px 64px; }
+  .tree ul { padding-top: 20px; position: relative; display: flex; flex-direction: column; align-items: center; }
+  .tree li { list-style: none; display: flex; flex-direction: column; align-items: center; position: relative; padding: 20px 12px 0; }
+  .tree li::before, .tree li::after {
+    content: ''; position: absolute; top: 0; right: 50%;
+    border-top: 1px solid #E7E7E7; width: 50%; height: 20px;
+  }
+  .tree li::after { right: auto; left: 50%; border-left: 1px solid #E7E7E7; }
+  .tree li:only-child::before, .tree li:only-child::after { display: none; }
+  .tree li:first-child::before, .tree li:last-child::after { border: 0 none; }
+  .tree li:last-child::before { border-right: 1px solid #E7E7E7; border-radius: 0 8px 0 0; }
+  .tree li:first-child::after { border-radius: 8px 0 0 0; }
+  .tree ul ul::before {
+    content: ''; position: absolute; top: 0; left: 50%;
+    border-left: 1px solid #E7E7E7; width: 0; height: 20px;
+  }
+  .node {
+    border: 1px solid #E7E7E7; background: #FFFFFF; border-radius: 10px;
+    padding: 12px 16px; cursor: pointer; font-size: 14px;
+    font-family: inherit; color: #0A0A0A; transition: background .15s ease, border-color .15s ease;
+  }
+  .node:hover, .node:focus-visible { background: var(--accent); border-color: #B9CDF6; outline: none; }
+  .node.dept { font-family: "Space Grotesk", sans-serif; font-weight: 600; }
+  .node .meta { display: block; font-size: 12px; color: #6B7280; font-weight: 400; }
+</style>
+</head>
+<body>
+<header>
+  <h1>研发团队</h1>
+  <p>点击任意节点查看人员档案（背景模糊）</p>
+</header>
+
+<div class="tree" id="tree"></div>
+<info-popup id="popup" accent="#E8F0FE"></info-popup>
+
+<script type="module">
+  import './info-popup.js';
+
+  function avatar(name, bg) {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96"><rect width="96" height="96" fill="${bg}"/><text x="48" y="61" font-size="38" text-anchor="middle" fill="#0A0A0A" font-family="sans-serif">${name[0]}</text></svg>`;
+    return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+  }
+
+  const data = {
+    name: '研发中心', type: 'dept', pic: avatar('研', '#E8F0FE'), role: '部门', dept: '总部',
+    reportsTo: [], location: '北京 · 上海', location_txt: '办公地点', since: '2018-01', profile: '负责公司核心产品的研发与交付。',
+    children: [
+      { name: '前端组', type: 'dept', pic: avatar('前', '#E8F0FE'), role: '团队', dept: '研发中心',
+        reportsTo: ['研发中心'], location: '北京', location_txt: '办公地点', since: '2019-06', profile: '负责 Web 与移动端的界面研发。',
+        children: [
+          { name: '李然', type: 'person', pic: avatar('李', '#E8F0FE'), role: '前端工程师', dept: '前端组', id: 'ENG-014',
+            reportsTo: ['研发中心', '前端组'], location: ['北京', '远程'], location_txt: '办公地点', since: '2021-03',
+            profile: '负责组件库与前端工程化，关注可访问性与性能。' },
+          { name: '王璐', type: 'person', pic: avatar('王', '#E8F0FE'), role: 'UI 设计师', dept: '前端组', id: 'DSN-007',
+            reportsTo: ['研发中心', '前端组'], location: '上海', location_txt: '办公地点', since: '2020-09',
+            profile: '负责产品界面与设计系统，注重简洁与一致性。' },
+        ]
+      },
+      { name: '后端组', type: 'dept', pic: avatar('后', '#E8F0FE'), role: '团队', dept: '研发中心',
+        reportsTo: ['研发中心'], location: '北京', location_txt: '办公地点', since: '2019-06', profile: '负责服务端与数据平台。',
+        children: [
+          { name: '张昊', type: 'person', pic: avatar('张', '#E8F0FE'), role: '后端工程师', dept: '后端组', id: 'ENG-021',
+            reportsTo: ['研发中心', '后端组'], location: '北京', location_txt: '办公地点', since: '2022-01',
+            profile: '负责 API 与数据服务，关注稳定性与可观测性。' },
+        ]
+      },
+    ]
+  };
+
+  const popup = document.getElementById('popup');
+
+  function renderNode(node, container) {
+    const li = document.createElement('li');
+    const btn = document.createElement('button');
+    btn.className = 'node' + (node.type === 'dept' ? ' dept' : '');
+    btn.type = 'button';
+    btn.textContent = node.name;
+    const meta = document.createElement('span');
+    meta.className = 'meta';
+    meta.textContent = node.role;
+    btn.append(meta);
+    btn.addEventListener('click', () => popup.show(node));
+    li.append(btn);
+
+    if (node.children && node.children.length) {
+      const ul = document.createElement('ul');
+      node.children.forEach((child) => renderNode(child, ul));
+      li.append(ul);
+    }
+    container.append(li);
+  }
+
+  const rootUl = document.createElement('ul');
+  renderNode(data, rootUl);
+  document.getElementById('tree').append(rootUl);
+</script>
+</body>
+</html>
