@@ -1,6 +1,6 @@
-import { test } from 'node:test';
-import assert from 'node:assert/strict';
-import { normalizeInfo } from '../fields.js';
+const { test } = require('node:test');
+const assert = require('node:assert/strict');
+const { normalizeInfo } = require('../fields.js');
 
 test('normalizeInfo: returns normalized list', () => {
   const out = normalizeInfo([

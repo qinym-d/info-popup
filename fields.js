@@ -1,4 +1,4 @@
-export function normalizeInfo(info) {
+function normalizeInfo(info) {
   if (!Array.isArray(info)) return [];
   return info
     .map((item) => {
@@ -17,4 +17,8 @@ export function normalizeInfo(info) {
       return { type, value };
     })
     .filter(Boolean);
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { normalizeInfo };
 }

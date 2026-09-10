@@ -23,9 +23,10 @@
 
 ```html
 <info-popup id="popup" accent="#E8F0FE"></info-popup>
-<script type="module" src="info-popup.js"></script>
+<script src="fields.js"></script>
+<script src="info-popup.js"></script>
 
-<script type="module">
+<script>
   const popup = document.getElementById('popup');
 
   popup.show({
@@ -82,7 +83,7 @@ info-popup.js       组件（Shadow DOM、渲染、焦点/键盘逻辑）
 fields.js           纯函数 normalizeInfo（无 DOM，可单测）
 demo.html           演示页
 test/fields.test.js 单元测试
-package.json        { "type": "module" }
+package.json        空标记（用于 Node 测试）
 pic/                示例图片
 ```
 

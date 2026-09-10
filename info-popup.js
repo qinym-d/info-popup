@@ -1,5 +1,3 @@
-import { normalizeInfo } from './fields.js';
-
 const DEFAULT_ACCENT = '#E8F0FE';
 
 const template = document.createElement('template');
@@ -77,7 +75,7 @@ template.innerHTML = `
 </div>
 `;
 
-export class InfoPopup extends HTMLElement {
+class InfoPopup extends HTMLElement {
   static get observedAttributes() { return ['accent']; }
 
   constructor() {
@@ -196,6 +194,4 @@ export class InfoPopup extends HTMLElement {
   }
 }
 
-if (typeof customElements !== 'undefined') {
-  customElements.define('info-popup', InfoPopup);
-}
+customElements.define('info-popup', InfoPopup);
