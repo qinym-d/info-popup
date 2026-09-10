@@ -71,6 +71,7 @@ template.innerHTML = `
     width: 96px; height: 96px; border-radius: 50%; object-fit: cover;
     display: block; margin: 0 auto 12px; border: 3px solid var(--info-popup-accent);
   }
+  .photo[hidden] { display: none; }
   .name { font-family: "Space Grotesk", sans-serif; font-size: 18px; font-weight: 600; margin: 0 0 16px; }
   .fields { display: inline-block; margin: 0 0 16px; }
   .field { display: grid; grid-template-columns: 1fr 1fr; align-items: center; width: 220px; padding: 4px 0; }
